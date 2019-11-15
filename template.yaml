@@ -1,0 +1,26 @@
+# https://github.com/awslabs/serverless-application-model/blob/develop/versions/2016-10-31.md
+# Indentation needs to be set with spaces, because YAML...
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Lambda function that triggers on an SNS topic publication when a new review is created to create stats specific to battelgrounds
+
+Resources:
+    BuildBattlegroundsPlayerMatchStatsFunction:
+        Type: AWS::Serverless::Function
+        Properties:
+            Handler: build-battlegrounds-player-match-stats.default
+            Runtime: nodejs8.10
+            Timeout: 120
+            Tracing: Active
+            CodeUri: ./dist/build-battlegrounds-player-match-stats
+            MemorySize: 256
+            Policies:
+                - AWSLambdaVPCAccessExecutionRole
+                - AmazonSESFullAccess
+                - SecretsManagerReadWrite
+                - AmazonSNSReadOnlyAccess
+            Events:
+                ReviewPublishedSnsTopic:
+                    Type: SNS
+                    Properties:
+                        Topic: arn:aws:sns:us-west-2:478062583808:review-published
