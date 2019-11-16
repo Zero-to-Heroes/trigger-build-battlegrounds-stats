@@ -28,13 +28,14 @@ export class StatsBuilder {
 			console.log('parsing replay');
 			const replay: Replay = parseHsReplayString(replayString);
 			console.log('parsed replay');
-			const playerStats: readonly PlayerStat[] = buildPlayerStats(replay, message.reviewId);
+			const playerStats: readonly PlayerStat[] = buildPlayerStats(replay, message);
 			console.log('built player stats', playerStats);
 			const mysql = await db.getConnection();
 			console.log('acquired mysql connection');
 			await this.saveStats(mysql, playerStats);
 			console.log('result saved');
 			await mysql.end();
+			console.log('returning');
 			return playerStats;
 		} catch (e) {
 			console.warn('Could not build replay for', message.reviewId, e);
@@ -43,17 +44,27 @@ export class StatsBuilder {
 	}
 
 	private async saveStats(mysql, playerStats: readonly PlayerStat[]): Promise<void> {
-		const values = playerStats.map(stat => `('${stat.heroCardId}', '${stat.finalRank}', '${stat.tavernUpgrade}')`);
+		const values = playerStats.map(
+			stat =>
+				`('${stat.heroCardId}', '${stat.finalRank}', '${stat.tavernUpgrade}', '${stat.matchId}', '${stat.playerRank}')`,
+		);
 		const valuesString = values.join(',');
 		const query = `
 				INSERT INTO player_match_recap (
 					heroCardId,
 					finalRank,
-					tavernUpgrade
+					tavernUpgrade,
+					matchId,
+					playerRank
 				)
 				VALUES ${valuesString}`;
-
-		await mysql.query(query);
+		console.log('saving stats', query);
+		try {
+			await mysql.query(query);
+			console.log('saved stats');
+		} catch (e) {
+			console.error('error while saving stats', e);
+		}
 	}
 
 	private async loadReplayString(replayKey: string): Promise<string> {

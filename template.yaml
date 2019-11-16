@@ -10,7 +10,7 @@ Resources:
         Properties:
             Handler: build-battlegrounds-player-match-stats.default
             Runtime: nodejs8.10
-            Timeout: 120
+            Timeout: 60
             Tracing: Active
             CodeUri: ./dist/build-battlegrounds-player-match-stats
             MemorySize: 256
