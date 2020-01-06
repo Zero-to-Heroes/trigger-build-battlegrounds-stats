@@ -23,7 +23,7 @@ export const buildPlayerStats = (replay: Replay, review: ReviewMessage): readonl
 	// Each player has one ID per match, so we need to aggregate all of them
 	// It also inclues the choices during mulligan, which should be ok since they are not assigned any info
 	const playerCardIds = [...new Set(playerEntities.map(entity => entity.get('cardID')))];
-	console.log(playerCardIds);
+	// console.log(playerCardIds);
 
 	const result: readonly PlayerStat[] = playerCardIds
 		.map(cardId => buildPlayerStat(playerEntities, cardId, replay))
@@ -35,7 +35,7 @@ export const buildPlayerStats = (replay: Replay, review: ReviewMessage): readonl
 			} as PlayerStat),
 		)
 		.sort((a, b) => a.finalRank - b.finalRank);
-	console.log('result', result);
+	// console.log('result', result);
 	if (result.length !== 8) {
 		console.error('InvalidStatCount: ', result.length);
 	}

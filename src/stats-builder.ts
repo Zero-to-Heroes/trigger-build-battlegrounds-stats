@@ -12,30 +12,30 @@ export class StatsBuilder {
 	}
 
 	private async buildStat(message: ReviewMessage): Promise<readonly PlayerStat[]> {
-		console.log('processing message', message);
+		// console.log('processing message', message);
 		if (message.gameMode !== 'battlegrounds') {
-			console.log('not a battlegrounds game, not processing');
+			// console.log('not a battlegrounds game, not processing');
 			return null;
 		}
 		console.log('building stat for', message.replayKey);
 		const replayString = await this.loadReplayString(message.replayKey);
 		if (!replayString || replayString.length === 0) {
-			console.log('empty replay, returning');
+			// console.log('empty replay, returning');
 			return null;
 		}
-		console.log('loaded replay string', replayString.length);
+		// console.log('loaded replay string', replayString.length);
 		try {
-			console.log('parsing replay');
+			// console.log('parsing replay');
 			const replay: Replay = parseHsReplayString(replayString);
-			console.log('parsed replay');
+			// console.log('parsed replay');
 			const playerStats: readonly PlayerStat[] = buildPlayerStats(replay, message);
-			console.log('built player stats', playerStats);
+			// console.log('built player stats', playerStats);
 			const mysql = await db.getConnection();
-			console.log('acquired mysql connection');
+			// console.log('acquired mysql connection');
 			await this.saveStats(mysql, playerStats);
-			console.log('result saved');
+			// console.log('result saved');
 			await mysql.end();
-			console.log('returning');
+			// console.log('returning');
 			return playerStats;
 		} catch (e) {
 			console.warn('Could not build replay for', message.reviewId, e);
@@ -58,10 +58,10 @@ export class StatsBuilder {
 					playerRank
 				)
 				VALUES ${valuesString}`;
-		console.log('saving stats', query);
+		// console.log('saving stats', query);
 		try {
 			await mysql.query(query);
-			console.log('saved stats');
+			// console.log('saved stats');
 		} catch (e) {
 			console.error('error while saving stats', e);
 		}
@@ -77,11 +77,11 @@ const http = async (request: RequestInfo): Promise<any> => {
 	return new Promise(resolve => {
 		fetch(request)
 			.then(response => {
-				console.log('received response, reading text body');
+				// console.log('received response, reading text body');
 				return response.text();
 			})
 			.then(body => {
-				console.log('sending back body', body && body.length);
+				// console.log('sending back body', body && body.length);
 				resolve(body);
 			});
 	});
