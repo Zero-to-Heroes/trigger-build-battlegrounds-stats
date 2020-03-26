@@ -9,7 +9,7 @@ Resources:
         Type: AWS::Serverless::Function
         Properties:
             Handler: build-battlegrounds-player-match-stats.default
-            Runtime: nodejs8.10
+            Runtime: nodejs10.x
             Timeout: 60
             CodeUri: ./dist/build-battlegrounds-player-match-stats
             MemorySize: 256
